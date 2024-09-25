@@ -28,3 +28,7 @@ A universal clipboard that syncs clipboard data between devices connected to the
   - [ ] clipboard history
   - [ ] errors as toast
   - [ ] settings
+
+## Planned Features
+- [ ] sync with selected devices
+- [ ] (?) account based sync (would deviate from local network sync)

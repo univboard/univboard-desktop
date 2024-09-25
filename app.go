@@ -28,9 +28,18 @@ func (a *App) startup(ctx context.Context) {
 		emitter.Error(ctx, err)
 	}
 
-	if err := clipboard.InitWatcher(ctx); err != nil {
-		emitter.Error(ctx, err)
-	}
+	// Initialize the clipboard watchers for text and image in separate goroutines
+	go func() {
+		if err := clipboard.InitTextWatcher(ctx); err != nil {
+			emitter.Error(ctx, err)
+		}
+	}()
+
+	go func() {
+		if err := clipboard.InitImageWatcher(ctx); err != nil {
+			emitter.Error(ctx, err)
+		}
+	}()
 }
 
 // domReady is called after front-end resources have been loaded
@@ -48,4 +57,7 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
 	// Perform your teardown here
+
+	// cancel the context to close all running ops
+	a.ctx.Done()
 }
