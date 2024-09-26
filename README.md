@@ -15,13 +15,14 @@ A universal clipboard that syncs clipboard data between devices connected to the
   - [ ] device registration
     - [ ] alias
 - [ ] clipboard
+  - [x] watch for both text and images
   - [ ] send clipboard data
   - [ ] receive clipboard data
 - [ ] notifications (not in wails)
   - [ ] CTA click 
-- [ ] storage
-  - [ ] config file
-  - [ ] clipboard history
+- [x] storage
+  - [x] config file
+  - [x] clipboard history
   - [ ] device list
 - [ ] UI
   - [ ] design
