@@ -1,11 +1,12 @@
 package main
 
 import (
-	"encoding/base64"
 	"context"
+	"encoding/base64"
 	"log"
 
-	"univboard/modules/clipboard"
+	"univboard/models"
+	watcher "univboard/modules/clipboard"
 	"univboard/modules/emitter"
 	"univboard/modules/store"
 
@@ -16,6 +17,8 @@ import (
 type App struct {
 	ctx context.Context
 }
+
+var localHistory *models.History
 
 // NewApp creates a new App application struct
 func NewApp() *App {
@@ -31,6 +34,12 @@ func (a *App) startup(ctx context.Context) {
 	if err := store.Init(); err != nil {
 		log.Println(err)
 		emitter.Error(ctx, err)
+	}
+
+	if history, err := store.Load[store.Data](store.DATA_FILE); err != nil {
+		emitter.Error(ctx, err)
+	} else {
+		localHistory = history
 	}
 
 	// Initialize the clipboard and watchers
@@ -54,7 +63,7 @@ func (a *App) startup(ctx context.Context) {
 				return base64.StdEncoding.EncodeToString(data)
 			},
 		},
-	})
+	}, localHistory)
 }
 
 // domReady is called after front-end resources have been loaded
@@ -66,6 +75,12 @@ func (a App) domReady(ctx context.Context) {
 // either by clicking the window close button or calling runtime.Quit.
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
+	// Save the clipboard history
+	if err := store.Save(store.DATA_FILE, localHistory); err != nil {
+		emitter.Error(ctx, err)
+		return true
+	}
+
 	return false
 }
 

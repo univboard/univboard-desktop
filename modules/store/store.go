@@ -13,6 +13,8 @@ type Data = models.History
 
 var (
 	CONFIG_PATH = os.Getenv("HOME") + "/.config/univboard"
+	CONFIG_FILE = CONFIG_PATH + "/config.json"
+	DATA_FILE   = CONFIG_PATH + "/data.json"
 )
 
 // initializes the local storage
@@ -20,7 +22,7 @@ func Init() error {
 	os.MkdirAll(CONFIG_PATH, 0755)
 
 	// create the config.json and data.json file if it doesn't exist
-	if err := ensureFileExists(CONFIG_PATH+"/config.json", &Config{
+	if err := ensureFileExists(CONFIG_FILE, &Config{
 		HistoryLimit:  100,
 		SyncInterval:  60,
 		EncryptionKey: "",
@@ -29,7 +31,7 @@ func Init() error {
 	}
 
 	// create the data.json file if it doesn't exist
-	if err := ensureFileExists(CONFIG_PATH+"/data.json", &Data{
+	if err := ensureFileExists(DATA_FILE, &Data{
 		Items:       []models.ClipboardItem{},
 		PinnedItems: []models.ClipboardItem{},
 	}); err != nil {

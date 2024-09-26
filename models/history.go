@@ -1,9 +1,5 @@
 package models
 
-import (
-	"time"
-)
-
 // History represents the clipboard history.
 type History struct {
 	Items       []ClipboardItem `json:"items"`
@@ -13,17 +9,15 @@ type History struct {
 // ClipboardItem represents an individual item in the clipboard history.
 type ClipboardItem struct {
 	Content    string `json:"content"`
-	Timestamp  string `json:"timestamp"`
+	Timestamp  int64 `json:"timestamp"`
 	DeviceName string `json:"device_name"`
-	DeviceID   string `json:"device_id"`
 }
 
 // NewClipboardItem creates a new ClipboardItem and sets the date string.
-func NewClipboardItem(content, deviceName, deviceID string, timestamp int64) ClipboardItem {
+func NewClipboardItem(content string, deviceName string, timestamp int64) ClipboardItem {
 	return ClipboardItem{
 		Content:    content,
-		Timestamp:  time.Unix(timestamp, 0).String(),
+		Timestamp:  timestamp,
 		DeviceName: deviceName,
-		DeviceID:   deviceID,
 	}
 }
