@@ -1,11 +1,15 @@
 package main
 
 import (
+	"encoding/base64"
 	"context"
+	"log"
 
 	"univboard/modules/clipboard"
 	"univboard/modules/emitter"
 	"univboard/modules/store"
+
+	"golang.design/x/clipboard"
 )
 
 // App struct
@@ -25,21 +29,32 @@ func (a *App) startup(ctx context.Context) {
 
 	// Initialize the store
 	if err := store.Init(); err != nil {
+		log.Println(err)
 		emitter.Error(ctx, err)
 	}
 
-	// Initialize the clipboard watchers for text and image in separate goroutines
-	go func() {
-		if err := clipboard.InitTextWatcher(ctx); err != nil {
-			emitter.Error(ctx, err)
-		}
-	}()
+	// Initialize the clipboard and watchers
+	if err := clipboard.Init(); err != nil {
+		log.Println(err)
+		emitter.Error(ctx, err)
+	}
 
-	go func() {
-		if err := clipboard.InitImageWatcher(ctx); err != nil {
-			emitter.Error(ctx, err)
-		}
-	}()
+	watcher.Init(ctx, []watcher.WatcherConfig{
+		{
+			Format: clipboard.FmtText,
+			EventName: watcher.TEXT_COPIED,
+			DataProcessor: func(data []byte) interface{} {
+				return string(data)
+			},
+		},
+		{
+			Format: clipboard.FmtImage,
+			EventName: watcher.IMAGE_COPIED,
+			DataProcessor: func(data []byte) interface{} {
+				return base64.StdEncoding.EncodeToString(data)
+			},
+		},
+	})
 }
 
 // domReady is called after front-end resources have been loaded
