@@ -11,9 +11,13 @@ A universal clipboard that syncs clipboard data between devices connected to the
 
 ## TODO
 - [ ] server
-  - [ ] network discovery
+  - [ ] network discovery (multicast/HTTP)
+    - [ ] bind traffic to a port
+    - [ ] avoid self-discovery (password/fingerprint)
+    - [ ] generate TLS/SSL certificate on device (auto)
   - [ ] device registration
-    - [ ] alias
+    - [ ] alias + other details (user provided)
+  - [ ] choose what device to sync to/with
 - [ ] clipboard
   - [ ] send clipboard data
   - [ ] receive clipboard data
