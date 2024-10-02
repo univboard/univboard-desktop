@@ -9,7 +9,7 @@ type History struct {
 // ClipboardItem represents an individual item in the clipboard history.
 type ClipboardItem struct {
 	Content    string `json:"content"`
-	Timestamp  int64 `json:"timestamp"`
+	Timestamp  int64  `json:"timestamp"`
 	DeviceName string `json:"device_name"`
 }
 

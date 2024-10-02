@@ -9,6 +9,7 @@ import (
 	watcher "univboard/modules/clipboard"
 	"univboard/modules/emitter"
 	"univboard/modules/store"
+	common "univboard/modules/utils"
 
 	"golang.design/x/clipboard"
 )
@@ -50,15 +51,15 @@ func (a *App) startup(ctx context.Context) {
 
 	watcher.Init(ctx, []watcher.WatcherConfig{
 		{
-			Format: clipboard.FmtText,
-			EventName: watcher.TEXT_COPIED,
+			Format:    clipboard.FmtText,
+			EventName: common.TEXT_COPIED,
 			DataProcessor: func(data []byte) interface{} {
 				return string(data)
 			},
 		},
 		{
-			Format: clipboard.FmtImage,
-			EventName: watcher.IMAGE_COPIED,
+			Format:    clipboard.FmtImage,
+			EventName: common.IMAGE_COPIED,
 			DataProcessor: func(data []byte) interface{} {
 				return base64.StdEncoding.EncodeToString(data)
 			},
@@ -69,6 +70,9 @@ func (a *App) startup(ctx context.Context) {
 // domReady is called after front-end resources have been loaded
 func (a App) domReady(ctx context.Context) {
 	// Add your action here
+
+	// Emit the history loaded event
+	emitter.Event(ctx, common.HISTORY_LOADED, common.ToJson[models.History](*localHistory))
 }
 
 // beforeClose is called when the application is about to quit,

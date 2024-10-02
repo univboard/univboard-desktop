@@ -19,3 +19,7 @@ func Error(ctx context.Context, err error) {
 func Event(ctx context.Context, event string, data interface{}) {
 	runtime.EventsEmit(ctx, event, data)
 }
+
+func Listen(ctx context.Context, event string, callback func(data ...interface{})) {
+	runtime.EventsOn(ctx, event, callback);
+}

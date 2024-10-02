@@ -12,13 +12,6 @@ import (
 	"golang.design/x/clipboard"
 )
 
-var (
-	TEXT_COPIED    = "text_copied"
-	TEXT_RECEIVED  = "text_received"
-	IMAGE_COPIED   = "image_copied"
-	IMAGE_RECEIVED = "image_received"
-)
-
 // DataProcessor defines a function type for processing clipboard data
 type DataProcessor func([]byte) interface{}
 type WatcherConfig struct {
