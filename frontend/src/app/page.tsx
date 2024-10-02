@@ -45,20 +45,6 @@ export default function Home() {
 	useEffect(() => {
 		populateHistory();
 
-		EventsOn(EClipboardEvent.HISTORY_LOADED, (data: string) => {
-			const parsedData: THistoryItem = JSON.parse(data);
-			console.log("/n/n/n/n/", parsedData, "/n/n/n/n/");
-
-			// setHistory((prev) => [
-			// 	...prev,
-			// 	{
-			// 		text: parsedData.content,
-			// 		timestamp: parsedData.timestamp,
-			// 		deviceName: parsedData.device_name,
-			// 	},
-			// ]);
-		});
-
 		EventsOn(EClipboardEvent.TEXT_COPIED, (data: string) => {
 			setHistory((prev) => [
 				...prev,
@@ -92,8 +78,6 @@ export default function Home() {
 
 		return () => {
 			EventsOff(
-				// EClipboardEvent.LOAD_HISTORY,
-				EClipboardEvent.HISTORY_LOADED,
 				EClipboardEvent.TEXT_COPIED,
 				EClipboardEvent.TEXT_RECEIVED,
 				EClipboardEvent.IMAGE_COPIED,
