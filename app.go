@@ -70,9 +70,6 @@ func (a *App) startup(ctx context.Context) {
 // domReady is called after front-end resources have been loaded
 func (a App) domReady(ctx context.Context) {
 	// Add your action here
-
-	// Emit the history loaded event
-	emitter.Event(ctx, common.HISTORY_LOADED, common.ToJson[models.History](*localHistory))
 }
 
 // beforeClose is called when the application is about to quit,
@@ -94,4 +91,9 @@ func (a *App) shutdown(ctx context.Context) {
 
 	// cancel the context to close all running ops
 	a.ctx.Done()
+}
+
+// Returns the stringified clipboard history
+func (a *App) LoadHistory() string {
+	return common.ToJson[models.History](*localHistory)
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { EventsEmit, EventsOff, EventsOn } from "@/wailsjs/runtime/runtime";
+import { EventsOff, EventsOn } from "@/wailsjs/runtime/runtime";
 import { useEffect, useState } from "react";
 import { HiOutlineDeviceMobile } from "react-icons/hi";
 import {
@@ -18,18 +18,36 @@ import {
 } from "react-icons/tb";
 import { RiSettings3Line } from "react-icons/ri";
 import { MdAddCircleOutline, MdOutlineSave } from "react-icons/md";
-import { TClipboardItem, THistoryItem } from "@/lib/types";
+import { TClipboardItem, THistory, THistoryItem } from "@/lib/types";
 import { EClipboardEvent } from "@/lib/enums";
+import { LoadHistory } from "@/wailsjs/go/main/App";
+import { FaRegClock } from "react-icons/fa";
+import Toast from "@/components/toast";
 
 export default function Home() {
 	const [history, setHistory] = useState<TClipboardItem[]>([]);
 
+	const populateHistory = async () => {
+		const data = await LoadHistory();
+		const parsedData: THistory = JSON.parse(data);
+
+		setHistory(
+			parsedData.items.map((item) => {
+				return {
+					text: item.content,
+					timestamp: item.timestamp,
+					deviceName: item.device_name,
+				};
+			})
+		);
+	};
+
 	useEffect(() => {
-		// EventsEmit(EClipboardEvent.LOAD_HISTORY, "");
+		populateHistory();
 
 		EventsOn(EClipboardEvent.HISTORY_LOADED, (data: string) => {
 			const parsedData: THistoryItem = JSON.parse(data);
-			console.log('/n/n/n/n/', parsedData, '/n/n/n/n/');
+			console.log("/n/n/n/n/", parsedData, "/n/n/n/n/");
 
 			// setHistory((prev) => [
 			// 	...prev,
@@ -196,7 +214,19 @@ export default function Home() {
 			<div className="my-4 flex-1 flex flex-col items-center gap-4 w-full">
 				{history.length > 0 &&
 					history.map((line, i) => (
-						<p key={i} className="w-screen-lg border-2 border-slate-900 p-2 rounded-lg">
+						<p
+							key={i}
+							className="w-screen-lg border-2 active:border-slate-500 border-slate-900 p-4 rounded-lg text-xl w-1/2 hover:bg-slate-900 cursor-pointer"
+							onClick={() => {
+								navigator.clipboard
+									.writeText(line.image ?? line.text)
+									.then(() => {
+										Toast("Copied to clipboard", {
+											type: "success",
+										});
+									});
+							}}
+						>
 							{line.text.length > 200
 								? line.text.slice(0, 200) + "..."
 								: line.text}
@@ -208,6 +238,16 @@ export default function Home() {
 								/>
 							)}
 							<br />
+							<div className="flex justify-between gap-4 mt-4">
+								<span className="text-sm font-thin flex justify-center items-center gap-1">
+									<FaRegClock className="text-muted-foreground" />
+									{new Date(line.timestamp ?? "").toLocaleString()}
+								</span>
+								<span className="text-sm font-thin flex justify-center items-center gap-1">
+									<HiOutlineDeviceMobile className="text-muted-foreground" />
+									{line.deviceName}
+								</span>
+							</div>
 						</p>
 					))}
 			</div>

@@ -11,3 +11,8 @@ export type THistoryItem = {
 	timestamp: number;
 	device_name: string;
 };
+
+export type THistory = {
+	items: THistoryItem[];
+	pinned_items: THistoryItem[];
+};
