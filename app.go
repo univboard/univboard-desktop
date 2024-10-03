@@ -19,6 +19,7 @@ type App struct {
 	ctx context.Context
 }
 
+var config *models.Config
 var localHistory *models.History
 
 // NewApp creates a new App application struct
@@ -37,6 +38,14 @@ func (a *App) startup(ctx context.Context) {
 		emitter.Error(ctx, err)
 	}
 
+	// Load the configuration
+	if cfg, err := store.Load[models.Config](store.CONFIG_FILE); err != nil {
+		emitter.Error(ctx, err)
+	} else {
+		config = cfg
+	}
+
+	// Load the clipboard history
 	if history, err := store.Load[store.Data](store.DATA_FILE); err != nil {
 		emitter.Error(ctx, err)
 	} else {
@@ -76,7 +85,10 @@ func (a App) domReady(ctx context.Context) {
 // either by clicking the window close button or calling runtime.Quit.
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
-	// Save the clipboard history
+	// Expire items older than user specified limit
+	common.Expire(config.HistoryLimit, localHistory)
+
+	// Save the updated clipboard history
 	if err := store.Save(store.DATA_FILE, localHistory); err != nil {
 		emitter.Error(ctx, err)
 		return true

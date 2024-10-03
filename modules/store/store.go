@@ -23,7 +23,7 @@ func Init() error {
 
 	// create the config.json and data.json file if it doesn't exist
 	if err := ensureFileExists(CONFIG_FILE, &Config{
-		HistoryLimit:  100,
+		HistoryLimit:  7,
 		SyncInterval:  60,
 		EncryptionKey: "",
 	}); err != nil {
