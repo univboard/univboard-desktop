@@ -207,6 +207,9 @@ export default function Home() {
 									.then(() => {
 										Toast("Copied to clipboard", {
 											type: "success",
+											data: {
+												duration: 999999,
+											}
 										});
 									});
 							}}
